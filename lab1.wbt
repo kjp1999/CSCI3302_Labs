@@ -1,0 +1,88 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  basicTimeStep 16
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 0.21227222403689752 -0.9354894288271147 -0.28248899351151296 4.388738080435614
+  position 5.5936259991149 3.6802099276706848 -1.228943503436382
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 3 3
+}
+WoodenBox {
+  translation 0 0.05 -0.5
+  name "wooden box(1)"
+  size 0.1 0.1 0.1
+  mass 10
+}
+WoodenBox {
+  translation 0 0.05 0.5
+  size 0.1 0.1 0.1
+  mass 10
+}
+E-puck {
+  controller "State_Machine_Lab1"
+  controllerArgs [
+    ""
+  ]
+}
+Solid {
+  translation 0 0.15 1.65
+  scale 3 3 3
+  children [
+    DEF Wall Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 1
+        roughness 0.5
+        metalness 0
+      }
+      geometry Box {
+        size 1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(2)"
+  boundingObject Box {
+    size 1 0.1 0.1
+  }
+}
+Solid {
+  translation 1.65 0.15 0
+  rotation 0 1 0 1.5707996938995747
+  scale 3 3 3
+  children [
+    USE Wall
+  ]
+  name "solid(3)"
+  boundingObject Box {
+    size 1 0.1 0.1
+  }
+}
+Solid {
+  translation -1.65 0.15 0
+  rotation 0 1 0 1.5707996938995747
+  scale 3 3 3
+  children [
+    USE Wall
+  ]
+  name "solid(5)"
+  boundingObject Box {
+    size 1 0.1 0.1
+  }
+}
+Solid {
+  translation 0 0.15 -1.65
+  scale 3 3 3
+  children [
+    USE Wall
+  ]
+  name "solid(4)"
+  boundingObject Box {
+    size 1 0.1 0.1
+  }
+}
