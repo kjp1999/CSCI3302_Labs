@@ -34,40 +34,74 @@ leftMotor.setPosition(float('inf'))
 rightMotor.setPosition(float('inf'))
 leftMotor.setVelocity(0.0)
 rightMotor.setVelocity(0.0)
+hFirst = False
+Right = False
 
-# Main loop:
-# - perform simulation steps until Webots is stopping the controller
+def Right():
+    while robot.step(TIME_STEP) != -1:
+        #set wheel speeds oposite to turn   
+        leftSpeed  = 0.5 * MAX_SPEED
+        rightSpeed = -0.5 * MAX_SPEED
+        
+        #read sensor values
+        psValues = []
+        for i in range(8):
+            psValues.append(ps[i].getValue())
+        #if sensor 5 reads 125 set wheel speeds the same to go straight and return
+        if psValues[5] >= 125:
+            leftSpeed = .5 * MAX_SPEED
+            rightSpeed = .5 * MAX_SPEED
+            leftMotor.setVelocity(leftSpeed)
+            rightMotor.setVelocity(rightSpeed)
+            return
+        
+        leftMotor.setVelocity(leftSpeed)
+        rightMotor.setVelocity(rightSpeed)
+
+def Around():
+    while robot.step(TIME_STEP) != -1:
+            
+        #read sensor values
+        psValues = []
+        for i in range(8):
+            psValues.append(ps[i].getValue())
+        
+        if psValues[3] >= 125 and psValues[4] >= 125:
+            leftMotor.setVelocity(.5 * MAX_SPEED)
+            rightMotor.setVelocity(.5 * MAX_SPEED)
+            return
+            
+        leftMotor.setVelocity(0.5 * MAX_SPEED)
+        rightMotor.setVelocity(-0.5 * MAX_SPEED)
+        
+
+
+# feedback loop: step simulation until receiving an exit event
 while robot.step(TIME_STEP) != -1:
-    # Read the sensors:
-    # Enter here functions to read sensor data, like:
-    #  val = ds.getValue()
+    # read sensors outputs
     psValues = []
     for i in range(8):
         psValues.append(ps[i].getValue())
-    # Process sensor data here.
+
+    # detect obstacles
+    f_obstacle = psValues[0] >= 100 or psValues[7] >= 100
     
-    #detect obstacles
-    front_obstacle = psValues[0] > 80.0 and psValues[7] > 80.0
-    
-    
-    # initialize motor speeds at 50% of MAX_SPEED.
-    leftSpeed  = 0.5 * MAX_SPEED
-    rightSpeed = 0.5 * MAX_SPEED
+    if Right == True:
+        # print(psValues[5])
+        if psValues[5] < 100:
+            leftMotor.setVelocity(0)
+            rightMotor.setVelocity(0)
+            break
     
     # modify speeds according to obstacles
-    if front_obstacle:
-        # turn 180 
-        while psValues[3] < 80.0 and psValues[4] < 80.0:
-            leftSpeed  = 0.5 * MAX_SPEED
-            rightSpeed = -0.5 * MAX_SPEED
-    
-    
-    # write actuators inputs
-    leftMotor.setVelocity(leftSpeed)
-    rightMotor.setVelocity(rightSpeed)
-    # Enter here functions to send actuator commands, like:
-    #  motor.setPosition(10.0)
-    pass
-
-# Enter here exit cleanup code.
-
+    if f_obstacle:
+        if hFirst == False:
+            # turn 180 degress clockwise
+            Around()
+            hFirst = True
+        elif hFirst == True:
+            Right()
+            Right = True
+        
+    leftMotor.setVelocity(0.5 * MAX_SPEED)
+    rightMotor.setVelocity(0.5 * MAX_SPEED)
